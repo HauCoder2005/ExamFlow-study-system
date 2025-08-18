@@ -1,0 +1,1 @@
+pool.execute trả về một mảng chứa 2 phần tử:

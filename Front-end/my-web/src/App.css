@@ -1,0 +1,31 @@
+/* App.css */
+.content-wrapper {
+  position: relative;
+  min-height: calc(100vh - 60px); /* 60px là chiều cao header */
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0; /* Bắt đầu ngay dưới header */
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: white; /* Nền trắng */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.page-content.hidden {
+  display: none;
+}
+
+.page-content.fade-in {
+  animation: fadeIn 0.3s ease-in forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
