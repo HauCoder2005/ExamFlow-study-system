@@ -3,6 +3,9 @@ import { BrowserRouter, useLocation } from "react-router-dom";
 import Router from "./routes/Router.routes";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "material-icons/iconfont/material-icons.css";
+
 import "./App.css"
 const LoadingOverlay = () => (
   <div className="loading-overlay">

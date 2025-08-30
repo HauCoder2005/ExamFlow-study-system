@@ -44,31 +44,39 @@ const usersController = {
             res.status(500).json({ message: "Lỗi server", error: err.message });
         }
     },
-// controllers/UserController.js
     async EditUserById(req, res) {
         try {
             const { id } = req.params;
-            const data = req.body;
-            console.log("id" + id + "data" + data);
+            const data = { ...req.body };
+
+            if (req.file) {
+                const protocol = (req.headers['x-forwarded-proto'] || req.protocol);
+                const host = req.get('host');
+                data.profile_image = `${protocol}://${host}/images/users/${req.file.filename}`;
+            }
+
             const isUpdated = await usersRepository.EditUserById(id, data);
 
             if (!isUpdated) {
                 return res.status(404).json({
-                    message: "User not found or no changes made.",
+                    message: 'User not found or no changes made.',
                 });
             }
-            return res.status(200).json({
-                message: "User updated successfully"
-            });
 
+            return res.status(200).json({
+                message: 'User updated successfully',
+                // Nếu cần trả về lại user mới để FE set state ngay:
+                // user: await usersRepository.GetOneUser(id)
+            });
         } catch (err) {
-            console.error("Error while updating user by ID:", err);
+            console.error('Error while updating user by ID:', err);
             return res.status(500).json({
-                message: "Internal server error",
+                message: 'Internal server error',
                 error: err.message,
             });
         }
     },
+
 
     async getAllStudents(req, res) {
         try {

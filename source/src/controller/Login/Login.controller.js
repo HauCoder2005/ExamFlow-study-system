@@ -1,6 +1,6 @@
 const LoginRepository = require("../../repositories/Login/Login.repository");
 const bcrypt = require("bcrypt");
-const verifyToken = require('../../middleware/VerifyToken');
+const { generateToken } = require('../../middleware/VerifyToken');
 const user = require("../../model/Users.model");
 const LoginController = {
     async logins(req, res) {
@@ -15,7 +15,7 @@ const LoginController = {
             console.log(email, "+", password);
             const users = await LoginRepository.findUserForLogin(email, password);
             console.log(users);
-            const token = verifyToken.generateToken(users);
+            const token = generateToken(users);
             if (users) {
                 res.status(200).json({
                     message: "Đăng nhập thành công!",

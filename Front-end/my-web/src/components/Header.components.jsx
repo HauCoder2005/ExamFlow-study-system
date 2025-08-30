@@ -51,12 +51,10 @@ const HeaderComponent = () => {
         }
     }, []);
 
-    // load khi mount và khi location thay đổi (navigate / back / forward)
     useEffect(() => {
         loadUserFromStorage();
     }, [loadUserFromStorage, location]);
 
-    // đồng bộ giữa các tab khi thay đổi localStorage
     useEffect(() => {
         const onStorage = (e) => {
             if (e.key === "user" || e.key === "accessToken" || e.key === "role") {
@@ -79,17 +77,13 @@ const HeaderComponent = () => {
     // Link động theo role
     const homeLink = user ? (user.role_id === 1 ? `/teacher/${user.id || ""}` : `/user/${user.id || ""}`) : "/";
     const examsLink = user ? (user.role_id === 1 ? "/teacher/exams" : "/online-exam") : "/online-exam";
-    const profileLink = user ? (user.role_id === 1 ? `/teacher/${user.id || ""}` : `/user-detail/${user.id || ""}`) : "/login";
+    const profileLink = user ? (user.role_id === 1 ? `/teacher-detail/${user.id || ""}` : `/user-detail/${user.id || ""}`) : "/login";
 
     return (
         <nav className="navbar navbar-expand-lg bg-black shadow-sm px-4 sticky-top">
             <div className="container-fluid">
                 <Link className="navbar-brand fw-bold fs-4 text-white" to="/">
-                    <img
-                        src="/images/logo-new.png"
-                        alt="Course"
-                        style={{ height: "28px", marginRight: "10px" }}
-                    />
+                   
                     ExamFlow
                 </Link>
 
@@ -130,7 +124,7 @@ const HeaderComponent = () => {
                     </ul>
 
                     {!user ? (
-                        <Link to="/login" className="btn btn-outline-light px-4 text-white">
+                        <Link to="/login" className="btn btn-light px-4 text-dark">
                             Đăng Nhập
                         </Link>
                     ) : (
@@ -140,7 +134,7 @@ const HeaderComponent = () => {
                                 type="button"
                                 data-bs-toggle="dropdown"
                             >
-                                👋 Xin chào, {user.first_name || "Người dùng"}
+                                👋 Xin chào, {user.last_name}
                             </button>
                             <ul className="dropdown-menu dropdown-menu-end">
                                 <li>

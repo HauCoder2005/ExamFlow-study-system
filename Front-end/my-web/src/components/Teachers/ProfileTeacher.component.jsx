@@ -39,11 +39,16 @@
                     {/* Thông tin giáo viên */}
                     <div className="col-md-8 mb-4">
                         <div
-                            className="card shadow-sm p-4 position-relative"
+                            className="card shadow-lg p-4 position-relative"
                             style={{
                                 fontSize: "1.1rem",
-                                height: "auto", // Tự co theo nội dung
-                                maxHeight: "220px", // Giới hạn chiều cao
+                                height: "auto",
+                                maxHeight: "220px",
+                                borderRadius: "16px",
+                                border: "2px solid rgba(0, 0, 0, 0.3)", // border nổi bật
+                                boxShadow: "0 8px 20px rgba(0,0,0,0.25)",
+                                background: "linear-gradient(145deg, #ffffff, #f0f8ff)", // gradient nhẹ
+                                transition: "transform 0.3s, box-shadow 0.3s",
                             }}
                         >
                             <div className="d-flex align-items-start">
@@ -63,7 +68,7 @@
                                 </div>
                             </div>
                             <Link
-                                to={`/user-detail/${user.id}`}
+                                to={`/teacher/teacher-detail/${user.id}`}
                                 className="btn btn-primary position-absolute"
                                 style={{ bottom: "16px", right: "16px" }}
                             >
@@ -75,19 +80,25 @@
                     {/* Danh sách sinh viên */}
                     <div className="col-md-4 mb-4">
                         <div
-                            className="card shadow-sm p-4"
+                            className="card shadow-lg p-4"
                             style={{
-                                fontSize: "1.05rem",
+                                fontSize: "1.1rem",
                                 height: "auto",
-                                maxHeight: "220px", // Giới hạn chiều cao
+                                maxHeight: "220px",
+                                borderRadius: "16px",
+                                border: "2px solid rgba(0, 0, 0, 0.3)",
+                                boxShadow: "0 8px 20px rgba(0,0,0,0.25)",
+                                background: "linear-gradient(145deg, #ffffff, #f0f8ff)",
+                                transition: "transform 0.3s, box-shadow 0.3s",
                             }}
+
                         >
                             <h5 className="fw-bold mb-3" style={{ fontSize: "1.3rem" }}>
                                 Danh Sách Sinh Viên
                             </h5>
                             <div style={{ overflowY: "auto" }}>
                                 {students.length > 0 ? (
-                                    students.slice(0, 3).map((student) => ( // Giới hạn 3 sinh viên
+                                    students.slice(0, 3).map((student) => (
                                         <div
                                             key={student.id}
                                             className="d-flex align-items-center border-bottom py-2"
@@ -117,6 +128,7 @@
                     </div>
                 </div>
             </div>
+
 
         );
     };

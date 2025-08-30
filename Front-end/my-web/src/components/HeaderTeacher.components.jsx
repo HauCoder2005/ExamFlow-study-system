@@ -100,11 +100,11 @@ const HeaderTeacherComponent = () => {
                                 type="button"
                                 data-bs-toggle="dropdown"
                             >
-                                👋 Xin chào, {user.first_name}
+                                👋 Xin chào, {user.last_name}
                             </button>
                             <ul className="dropdown-menu dropdown-menu-end">
                                 <li>
-                                    <Link className="dropdown-item" to={`/teacher/${user.id}/profile`}>
+                                        <Link className="dropdown-item" to={`/user-detail/${user.id}`}>
                                         Thông tin cá nhân
                                     </Link>
                                 </li>

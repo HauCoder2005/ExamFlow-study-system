@@ -20,7 +20,6 @@ const TeacherDetail = () => {
         return localDate.toISOString().slice(0, 10);
     };
 
-    // Format ngày sinh DD/MM/YYYY cho table hiển thị
     const formatDateForTable = (isoDate) => {
         if (!isoDate) return "";
         const d = new Date(isoDate);
@@ -35,7 +34,7 @@ const TeacherDetail = () => {
 
                 setDataUser(userData);
 
-                // Preview ảnh mặc định là ảnh từ DB
+                // Luôn set previewImage = ảnh hiện tại
                 setPreviewImage(userData.profile_image || null);
 
                 setFormValues({
@@ -59,14 +58,14 @@ const TeacherDetail = () => {
             const previewUrl = URL.createObjectURL(file);
             setPreviewImage(previewUrl);
 
-            // Cập nhật luôn preview ảnh trong phần thông tin chính
+            // cập nhật luôn preview ảnh trong phần thông tin chính
             setDataUser((prev) => ({
                 ...prev,
                 profile_image: previewUrl,
             }));
         }
     };
-
+    
     const editDataUser = async () => {
         try {
             const formData = new FormData();
@@ -77,8 +76,6 @@ const TeacherDetail = () => {
             if (formValues.date_of_birth_for_input) {
                 formData.append("date_of_birth", formValues.date_of_birth_for_input);
             }
-
-            // Chỉ append ảnh mới nếu người dùng chọn
             if (selectedFile) {
                 formData.append("profile_image", selectedFile);
             }
@@ -86,28 +83,29 @@ const TeacherDetail = () => {
             const updatedUser = await editUserById(id, formData);
 
             if (updatedUser) {
+                // Cập nhật dataUser bằng dữ liệu trả về từ backend
                 setDataUser((prev) => ({
                     ...prev,
                     ...formValues,
-                    // ưu tiên ảnh từ backend nếu có, còn không thì giữ preview hiện tại
                     profile_image: updatedUser.profile_image
                         ? `${updatedUser.profile_image}?t=${Date.now()}`
                         : prev.profile_image,
                     date_of_birth: formValues.date_of_birth_for_input || prev.date_of_birth,
                 }));
 
+                // reset selectedFile và previewImage
+                setSelectedFile(null);
+                setPreviewImage(updatedUser.profile_image ? `${updatedUser.profile_image}?t=${Date.now()}` : null);
+
                 setShowEditForm(false);
                 setShowSuccess(true);
-
-                // reset file chọn
-                setSelectedFile(null);
-
                 setTimeout(() => setShowSuccess(false), 2000);
             }
         } catch (error) {
             console.error("Lỗi khi cập nhật người dùng:", error);
         }
     };
+
 
     useEffect(() => {
         fetchUserData();
@@ -131,64 +129,28 @@ const TeacherDetail = () => {
                         <div className="col-md-4 d-flex justify-content-center align-items-start border-end">
                             <img
                                 key={dataUser?.profile_image}
-                                src={dataUser?.profile_image || "/fallback-avatar.png"}
+                                src={dataUser?.profile_image || '/fallback-avatar.png'}
                                 alt="Ảnh đại diện"
                                 className="img-fluid rounded-circle border border-2"
-                                style={{ width: 150, height: 150, objectFit: "cover" }}
+                                style={{ width: 150, height: 150, objectFit: 'cover' }}
                             />
                         </div>
                         <div className="col-md-8">
                             <div className="row">
                                 <div className="col-md-4 mb-2">
-                                    <p>
-                                        <strong>Họ tên:</strong>
-                                        <br />
-                                        {dataUser.first_name} {dataUser.last_name}
-                                    </p>
-                                    <p>
-                                        <strong>Học sinh lớp:</strong>
-                                        <br />
-                                        {dataUser.major}
-                                    </p>
-                                    <p>
-                                        <strong>Ngày sinh:</strong>
-                                        <br />
-                                        {formatDateForTable(dataUser.date_of_birth)}
-                                    </p>
-                                    <p>
-                                        <strong>Quê quán:</strong>
-                                        <br />
-                                        {dataUser.place_of_birth}
-                                    </p>
+                                    <p><strong>Họ tên:</strong><br />{dataUser.first_name} {dataUser.last_name}</p>
+                                    <p><strong>Chủ nhiệm lớp:</strong><br />{dataUser.major}</p>
+                                    <p><strong>Ngày sinh:</strong><br />{formatDateForTable(dataUser.date_of_birth)}</p>
+                                    <p><strong>Quê quán:</strong><br />{dataUser.place_of_birth}</p>
                                 </div>
                                 <div className="col-md-4 mb-2">
-                                    <p>
-                                        <strong>Bậc đào tạo:</strong>
-                                        <br />
-                                        Trung Học Phổ Thông
-                                    </p>
-                                    <p>
-                                        <strong>Loại hình đào tạo:</strong>
-                                        <br />
-                                        Chính quy
-                                    </p>
-                                    <p>
-                                        <strong>Trạng thái:</strong>
-                                        <br />
-                                        Đang là học sinh
-                                    </p>
+                                    <p><strong>Bậc đào tạo:</strong><br />Trung Học Phổ Thông</p>
+                                    <p><strong>Loại hình đào tạo:</strong><br />Chính quy</p>
+                                    <p><strong>Trạng thái:</strong><br />Đang là giáo viên</p>
                                 </div>
                                 <div className="col-md-4 mb-2">
-                                    <p>
-                                        <strong>Mã số học sinh:</strong>
-                                        <br />
-                                        {dataUser.id}
-                                    </p>
-                                    <p>
-                                        <strong>Email:</strong>
-                                        <br />
-                                        {dataUser.email}
-                                    </p>
+                                    <p><strong>Mã số giáo viên:</strong><br />{dataUser.id}</p>
+                                    <p><strong>Email:</strong><br />{dataUser.email}</p>
                                 </div>
                             </div>
                         </div>
@@ -199,84 +161,49 @@ const TeacherDetail = () => {
             )}
 
             {showEditForm && (
-                <div
-                    className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
-                    style={{ backgroundColor: "rgba(0,0,0,0.5)", zIndex: 9999 }}
-                >
+                <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
+                    style={{ backgroundColor: "rgba(0,0,0,0.5)", zIndex: 9999 }}>
                     <div className="bg-white p-4 rounded shadow" style={{ width: "500px" }}>
                         <h6 className="mb-3">Chỉnh sửa thông tin</h6>
                         <div className="row">
                             <div className="col-md-6 mb-2">
                                 <label>Họ</label>
-                                <input
-                                    className="form-control"
-                                    type="text"
+                                <input className="form-control" type="text"
                                     value={formValues.last_name || ""}
-                                    onChange={(e) =>
-                                        setFormValues({ ...formValues, last_name: e.target.value })
-                                    }
-                                />
+                                    onChange={(e) => setFormValues({ ...formValues, last_name: e.target.value })} />
                             </div>
                             <div className="col-md-6 mb-2">
                                 <label>Tên</label>
-                                <input
-                                    className="form-control"
-                                    type="text"
+                                <input className="form-control" type="text"
                                     value={formValues.first_name || ""}
-                                    onChange={(e) =>
-                                        setFormValues({ ...formValues, first_name: e.target.value })
-                                    }
-                                />
+                                    onChange={(e) => setFormValues({ ...formValues, first_name: e.target.value })} />
                             </div>
                             <div className="col-md-6 mb-2">
                                 <label>Email</label>
-                                <input
-                                    className="form-control"
-                                    type="email"
+                                <input className="form-control" type="email"
                                     value={formValues.email || ""}
-                                    onChange={(e) =>
-                                        setFormValues({ ...formValues, email: e.target.value })
-                                    }
-                                />
+                                    onChange={(e) => setFormValues({ ...formValues, email: e.target.value })} />
                             </div>
                             <div className="col-md-6 mb-2">
                                 <label>Quê quán</label>
-                                <input
-                                    className="form-control"
-                                    type="text"
+                                <input className="form-control" type="text"
                                     value={formValues.place_of_birth || ""}
-                                    onChange={(e) =>
-                                        setFormValues({ ...formValues, place_of_birth: e.target.value })
-                                    }
-                                />
+                                    onChange={(e) => setFormValues({ ...formValues, place_of_birth: e.target.value })} />
                             </div>
                             <div className="col-md-6 mb-2">
                                 <label>Ngày sinh</label>
-                                <input
-                                    className="form-control"
-                                    type="date"
+                                <input className="form-control" type="date"
                                     value={formValues.date_of_birth_for_input || ""}
-                                    onChange={(e) =>
-                                        setFormValues({ ...formValues, date_of_birth_for_input: e.target.value })
-                                    }
-                                />
+                                    onChange={(e) => setFormValues({ ...formValues, date_of_birth_for_input: e.target.value })} />
                             </div>
                             <div className="col-md-12 mb-2">
                                 <label>Ảnh đại diện</label>
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    className="form-control"
-                                    onChange={handleFileChange}
-                                />
+                                <input type="file" accept="image/*" className="form-control" onChange={handleFileChange} />
                                 {previewImage && (
                                     <div className="mt-2 text-center">
-                                        <img
-                                            src={previewImage}
-                                            alt="Preview"
+                                        <img src={previewImage} alt="Preview"
                                             className="rounded-circle border"
-                                            style={{ width: "80px", height: "80px", objectFit: "cover" }}
-                                        />
+                                            style={{ width: "80px", height: "80px", objectFit: "cover" }} />
                                     </div>
                                 )}
                             </div>
@@ -290,10 +217,7 @@ const TeacherDetail = () => {
             )}
 
             {showSuccess && (
-                <div
-                    className="position-fixed top-0 end-0 m-4 p-3 bg-success text-white rounded shadow"
-                    style={{ zIndex: 9999 }}
-                >
+                <div className="position-fixed top-0 end-0 m-4 p-3 bg-success text-white rounded shadow" style={{ zIndex: 9999 }}>
                     Cập nhật thông tin thành công!
                 </div>
             )}

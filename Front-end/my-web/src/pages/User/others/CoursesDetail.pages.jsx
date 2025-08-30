@@ -24,15 +24,18 @@ const CoursesDetail = () => {
                 }
                 console.log(response)
             } catch (err) {
-                console.error("❌ Lỗi khi gọi API:", err);
+                console.error("-> Lỗi khi gọi API:", err);
                 setError("Không thể tải thông tin môn học!");
             } finally {
                 setLoading(false);
             }
         };
+        const getAllExams = async () => {
 
+        }
         if (id) {
             fetchCourse();
+            getAllExams();
         } else {
             setError("ID không hợp lệ.");
             setLoading(false);

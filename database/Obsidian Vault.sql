@@ -51,6 +51,9 @@ CREATE TABLE exams (
     FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
     FOREIGN KEY (teacher_id) REFERENCES users(id) ON DELETE CASCADE
 );
+ALTER TABLE exams
+ADD COLUMN status TINYINT NOT NULL DEFAULT 0;
+
 
 -- Bảng câu hỏi
 CREATE TABLE questions (

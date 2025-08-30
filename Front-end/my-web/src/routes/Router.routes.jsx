@@ -15,40 +15,39 @@ import TeacherHome from "../pages/Teacher/TeacherHome.pages.jsx";
 import TeachersLayout from "../components/layouts/Teachers.layout.jsx";
 import OnlineExamTeacher from "../pages/Teacher/others/OnlineExamTeacher.pages.jsx";
 import CoursesDetailTeacher from "../pages/Teacher/others/CoursesDetailTeacher.pages.jsx";
+import TeacherDetail from "../components/Teachers/TeacherDetail.component.jsx";
 
 const Router = () => {
     return (
-        <>
-            <Routes>
-                {/* Layout dành cho người dùng */}
-                <Route element={<UsersLayout />}>
-                    <Route index element={<Home />} />
-                    <Route path="user/:id" element={<UserHome />} />
-                    <Route path="online-exam" element={<OnlineExam />} />
-                    <Route path="courses-detail/:id" element={<CoursesDetail />} />
-                    <Route path="user-detail/:id" element={<UserDetail />} />
-                </Route>
+        <Routes>
+            {/* Layout dành cho người dùng */}
+            <Route element={<UsersLayout />}>
+                <Route index element={<Home />} />
+                <Route path="user/:id" element={<UserHome />} />
+                <Route path="online-exam" element={<OnlineExam />} />
+                <Route path="courses-detail/:id" element={<CoursesDetail />} />
+                <Route path="user-detail/:id" element={<UserDetail />} />
+            </Route>
 
-                {/* Layout dành cho giáo viên */}
-                <Route path="teacher" element={<TeachersLayout />}>
-                    <Route index element={<Home />} />
-                    <Route path=":id" element={<TeacherHome />} />
-                    <Route path="/teacher/online-exam-teacher/:id" element={<OnlineExamTeacher />} />
-                    <Route path="/teacher/courses-detail/:id" element={<CoursesDetailTeacher />} />
-                </Route>
+            {/* Layout dành cho giáo viên */}
+            <Route path="teacher" element={<TeachersLayout />}>
+                <Route index element={<Home />} />
+                <Route path=":id" element={<TeacherHome />} />
+                <Route path="online-exam-teacher/:id" element={<OnlineExamTeacher />} />
+                <Route path="courses-detail/:id" element={<CoursesDetailTeacher />} />
+                <Route path="teacher-detail/:id" element={<TeacherDetail />} />
+            </Route>
 
-                {/* Auth routes - không dùng layout */}
-                <Route path="login" element={<LoginUser />} />
-                <Route path="register" element={<Register />} />
-                <Route path="forgot-password" element={<ForgotPassword />} />
-                <Route path="verify-otp" element={<VerifyOtpEmail />} />
-                <Route path="change-password" element={<ChangePassword />} />
+            {/* Auth routes - không dùng layout */}
+            <Route path="login" element={<LoginUser />} />
+            <Route path="register" element={<Register />} />
+            <Route path="forgot-password" element={<ForgotPassword />} />
+            <Route path="verify-otp" element={<VerifyOtpEmail />} />
+            <Route path="change-password" element={<ChangePassword />} />
 
-                {/* Admin */}
-                <Route path="admin" element={<AdminHome />} />
-            </Routes>
-
-        </>
+            {/* Admin */}
+            <Route path="admin" element={<AdminHome />} />
+        </Routes>
     );
 };
 

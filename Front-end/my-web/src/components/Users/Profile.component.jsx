@@ -3,21 +3,21 @@ import { Link, useParams } from "react-router-dom";
 import { getOneUsers } from "../../api/Users.api";
 
 const Profile = () => {
-    const { id } = useParams(); // 👉 lấy id từ URL: /users/:id
+    const { id } = useParams(); 
     const [user, setUser] = useState(null);
     const [error, setError] = useState("");
 
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const userData = await getOneUsers(id); // gọi API theo id
+                const userData = await getOneUsers(id); 
                 if (userData) {
                     setUser(userData[0]);
                 } else {
                     setError("Không tìm thấy người dùng.");
                 }
             } catch (err) {
-                console.error("❌ Lỗi khi fetch user:", err);
+                console.error("Lỗi khi fetch user:", err);
                 setError("Không thể tải thông tin người dùng!");
             }
         };
@@ -32,7 +32,6 @@ const Profile = () => {
 
         <div className="container mt-4">
             <div className="row">
-                {/* Thông tin sinh viên */}
                 <div className="col-md-8 mb-4">
                     <div className="card shadow-sm p-4 position-relative pb-5" style={{ minHeight: "100px" }}>
                         <div className="d-flex flex-row align-items-start">
@@ -50,7 +49,6 @@ const Profile = () => {
                             </div>
                         </div>
 
-                        {/* Nút chi tiết nằm góc dưới cùng bên phải */}
                         <Link
                             to={`/user-detail/${user.id}`}
                             className="btn btn-primary position-absolute"
@@ -60,16 +58,10 @@ const Profile = () => {
                         </Link>
                     </div>
                 </div>
-
-
-
-
-                {/* Lịch tháng */}
                 <div className="col-md-4 mb-4">
                     <div className="card shadow-sm p-4">
                         <h5 className="fw-bold mb-3">Lịch theo tháng</h5>
                         <input type="month" className="form-control mb-3" defaultValue="2025-06" />
-                        {/* Placeholder lịch đơn giản */}
                         <div className="text-center text-muted">📅 Hiển thị lịch ở đây</div>
                     </div>
                 </div>

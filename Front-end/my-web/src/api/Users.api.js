@@ -11,23 +11,29 @@ export const getOneUsers = async (id) => {
         throw error;
     }
 }   
-
 export const editUserById = async (id, userData) => {
-    try {
-        console.log("Sending data to: ", `/api/users/edit-user/${id}`);
-        console.log("UserData: ", userData);
+  try {
+    console.log("Sending data to: ", `/api/users/edit-user/${id}`);
+    console.log("UserData: ", userData);
 
-        const response = await AxiosInstance.put(`/api/users/edit-user/${id}`,
-          userData ,
-           
-        );
-        console.log("User edited successfully:", response.data);
-        return response.data;
-    } catch(error) {
-        console.error("Lỗi khi chỉnh sửa user:", error);
-        throw error;
-    }
-}
+    const response = await AxiosInstance.put(
+      `/api/users/edit-user/${id}`,
+      userData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data", // Quan trọng
+        },
+      }
+    );
+
+    console.log("User edited successfully:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi chỉnh sửa user:", error);
+    throw error;
+  }
+};
+
 
 export const getAllStByTeacher = async (id) => {
     try {

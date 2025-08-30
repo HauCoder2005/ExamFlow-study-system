@@ -46,23 +46,26 @@ const usersRepository = {
     },
     async EditUserById(id, data) {
         const query = `
-        UPDATE users SET
-            first_name = ?,
-            last_name = ?,
-            profile_image = ?,
-            place_of_birth = ?, 
-            major = ?,
-            graduation_year = ?
-        WHERE id = ?`;
+            UPDATE users SET
+                             first_name = ?,
+                             last_name = ?,
+                             profile_image = ?,
+                             place_of_birth = ?,
+                             major = ?,
+                             graduation_year = ?,
+                             date_of_birth = ?
+            WHERE id = ?`;
+
 
         return new Promise((resolve, reject) => {
             const {
-                first_name,
-                last_name,
-                profile_image,
-                place_of_birth,
-                major,
-                graduation_year,
+                first_name = null,
+                last_name = null,
+                profile_image = null,  // sẽ là full URL hoặc null nếu không upload
+                place_of_birth = null,
+                major = null,
+                graduation_year = null,
+                date_of_birth = null,
             } = data;
 
             const params = [
@@ -72,14 +75,16 @@ const usersRepository = {
                 place_of_birth,
                 major,
                 graduation_year,
-                id
+                date_of_birth,
+                id,
             ];
+
 
             config.query(query, params, (err, result) => {
                 if (err) return reject(err);
                 resolve(result.affectedRows > 0);
             });
-        }); 
+        });
     },
 
     async getAllStudents(id) {
