@@ -17,19 +17,13 @@ const LoginUser = () => {
 
         try {
             console.log("--> Gửi login với:", email, password);
-
             const data = await Login(email, password);
             console.log("- Đăng nhập thành công:", data);
-
-            // Lưu token & user info
             localStorage.setItem("accessToken", data.token);
             localStorage.setItem("user", JSON.stringify(data.user));
             localStorage.setItem("role", data.user.roleMapping?.role_id);
-
             const userId = data.user.id;
             const role_id = data.user.roleMapping?.role_id;
-
-            // ✅ Hiển thị thông báo SweetAlert
             Swal.fire({
                 icon: "success",
                 title: "Đăng nhập thành công!",

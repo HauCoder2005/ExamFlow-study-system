@@ -16,6 +16,7 @@ import TeachersLayout from "../components/layouts/Teachers.layout.jsx";
 import OnlineExamTeacher from "../pages/Teacher/others/OnlineExamTeacher.pages.jsx";
 import CoursesDetailTeacher from "../pages/Teacher/others/CoursesDetailTeacher.pages.jsx";
 import TeacherDetail from "../components/Teachers/TeacherDetail.component.jsx";
+import CreateQuestionTeacher from "../pages/Teacher/others/CreateQuestionTeacher.pages.jsx";
 
 const Router = () => {
     return (
@@ -36,6 +37,7 @@ const Router = () => {
                 <Route path="online-exam-teacher/:id" element={<OnlineExamTeacher />} />
                 <Route path="courses-detail/:id" element={<CoursesDetailTeacher />} />
                 <Route path="teacher-detail/:id" element={<TeacherDetail />} />
+                <Route path="exams/create-question/:exam_id" element={<CreateQuestionTeacher />}/>
             </Route>
 
             {/* Auth routes - không dùng layout */}

@@ -9,13 +9,10 @@ const HeaderTeacherComponent = () => {
         const accessToken = localStorage.getItem("accessToken");
         const storedUser = localStorage.getItem("user");
         const role = localStorage.getItem("role");
-
         if (!accessToken || !storedUser || role !== "1") {
-            // Nếu không phải teacher => redirect về login hoặc trang chủ
             navigate("/login", { replace: true });
             return;
         }
-
         try {
             const parsedUser = JSON.parse(storedUser);
             const normalizedUser = {

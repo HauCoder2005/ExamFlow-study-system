@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { getOneCoursesByIds } from "../../../api/Courses.api";
-import { createExams, getAllExamsByCourse } from "../../../api/Exams.api";
+import { createExams, deleteExamById, getAllExamsByCourse, updateStatusExam } from "../../../api/Exams.api";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Swal from "sweetalert2";
 
 const CoursesDetailTeacher = () => {
-    const { id } = useParams(); // id = course_id
+    const { id } = useParams();
     const [course, setCourse] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
-    const [exams, setExams] = useState([]); // ✅ danh sách đề thi
-
+    const [exams, setExams] = useState([]);
+    const [status, setStatus] = useState("");
     const [formData, setFormData] = useState({
         title: "",
         type: "multiple_choice",
@@ -19,19 +19,21 @@ const CoursesDetailTeacher = () => {
         total_score: 10,
         status: 1,
     });
-
-    // Lấy thông tin môn học
+    const roleId = Number(localStorage.getItem("role"));
+    const intRole = parseInt(roleId, 10);
+    console.log("Role ID từ localStorage: ", intRole);
     useEffect(() => {
         const fetchCourse = async () => {
             setLoading(true);
             try {
                 const response = await getOneCoursesByIds(id);
-                if (response) {
+                if (response && response[0]) {
                     setCourse(response[0]);
+                    sessionStorage.setItem("course", response[0].name);
                 } else {
                     setError("Không tìm thấy môn học.");
                 }
-            } catch (err) {
+            } catch {
                 setError("Không thể tải thông tin môn học!");
             } finally {
                 setLoading(false);
@@ -41,7 +43,7 @@ const CoursesDetailTeacher = () => {
         const fetchExams = async () => {
             try {
                 const data = await getAllExamsByCourse(id);
-                setExams(data.data || []); // backend trả về { message, data }
+                setExams(data.data || []);
             } catch (err) {
                 console.error("Lỗi khi lấy đề thi", err);
             }
@@ -52,6 +54,7 @@ const CoursesDetailTeacher = () => {
             fetchExams();
         }
     }, [id]);
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -68,7 +71,6 @@ const CoursesDetailTeacher = () => {
         e.preventDefault();
         try {
             const res = await createExams(id, formData);
-
             Swal.fire({
                 icon: "success",
                 title: "Thành công!",
@@ -76,8 +78,6 @@ const CoursesDetailTeacher = () => {
                 showConfirmButton: false,
                 timer: 2000,
             });
-
-            // Reset form
             setFormData({
                 title: "",
                 type: "multiple_choice",
@@ -85,8 +85,6 @@ const CoursesDetailTeacher = () => {
                 total_score: 10,
                 status: 1,
             });
-
-            // ✅ gọi lại API để load danh sách exam mới
             const data = await getAllExamsByCourse(id);
             setExams(data.data || []);
         } catch (err) {
@@ -97,6 +95,102 @@ const CoursesDetailTeacher = () => {
             });
         }
     };
+    // Chuyển về nháp
+    const handleDeleteExam = async (exam_id, status) => {
+        try {
+            if (status === 1) {
+                const swalWithBootstrapButtons = Swal.mixin({
+                    customClass: {
+                        confirmButton: "btn btn-success",
+                        cancelButton: "btn btn-danger",
+                    },
+                    buttonsStyling: false,
+                });
+
+                swalWithBootstrapButtons.fire({
+                    title: "Chuyển bài thi về nháp?",
+                    text: "Bạn có chắc muốn chuyển bài thi này về nháp không?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Chuyển!",
+                    cancelButtonText: "Huỷ!",
+                    reverseButtons: true,
+                }).then(async (result) => {
+                    if (result.isConfirmed) {
+                        await updateStatusExam(exam_id, 0);
+                        Swal.fire({
+                            icon: "success",
+                            title: "Thành công!",
+                            text: "Bài thi đã được chuyển về nháp.",
+                            showConfirmButton: false,
+                            timer: 1500,
+                        });
+                        const data = await getAllExamsByCourse(id);
+                        setExams(data.data || []);
+                    }
+                });
+            } else {
+                Swal.fire({
+                    icon: "info",
+                    title: "Thông báo",
+                    text: "Bài thi này đã ở trạng thái nháp.",
+                    showConfirmButton: false,
+                    timer: 1500,
+                });
+            }
+        } catch (err) {
+            console.error("Lỗi khi chuyển về nháp", err);
+        }
+    };
+
+    // Xoá
+    const handleToggleStatus = async (exam_id, status) => {
+        try {
+            if (status === 1) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Không thể xoá!",
+                    text: "Bạn phải chuyển về nháp trước khi xoá.",
+                    showConfirmButton: false,
+                    timer: 2000,
+                });
+                return;
+            }
+
+            const res = await deleteExamById(exam_id);
+
+            if (res) {
+                Swal.fire({
+                    icon: "success",
+                    title: "Thành công!",
+                    text: res.message || "Xoá đề thi thành công!",
+                    showConfirmButton: false,
+                    timer: 2000,
+                });
+            }
+
+            // Cập nhật state ngay mà không cần gọi lại API
+            setExams((prevExams) => {
+                const updatedExams = prevExams.filter((exam) => exam.exam_id !== exam_id);
+                return updatedExams;
+            });
+
+            console.log("Xoá đề thi thành công:", res);
+        } catch (err) {
+            Swal.fire({
+                icon: "error",
+                title: "Thất bại!",
+                text: err.response?.data?.message || "Xoá đề thi thất bại!",
+                showConfirmButton: false,
+                timer: 2000,
+            });
+
+            console.error("Lỗi khi xoá đề thi", err);
+        }
+    };
+
+
+
 
     if (loading) return <div className="text-center mt-4">Đang tải...</div>;
     if (error) return <div className="alert alert-danger mt-4">{error}</div>;
@@ -208,11 +302,12 @@ const CoursesDetailTeacher = () => {
                                     <th>Thời gian</th>
                                     <th>Tổng điểm</th>
                                     <th>Trạng thái</th>
+                                    <th>Chức năng</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {exams.map((exam, index) => (
-                                    <tr key={exam.id}>
+                                    <tr key={exam.exam_id}>
                                         <td>{index + 1}</td>
                                         <td className="fw-semibold">{exam.exam_title}</td>
                                         <td>
@@ -229,13 +324,41 @@ const CoursesDetailTeacher = () => {
                                         <td>
                                             <span
                                                 className={`badge ${exam.status === 1
-                                                        ? "bg-success"
-                                                        : "bg-secondary"
+                                                    ? "bg-success"
+                                                    : "bg-secondary"
                                                     }`}
                                             >
                                                 {exam.status === 1 ? "Hoạt động" : "Nháp"}
                                             </span>
                                         </td>
+
+                                        {
+                                            intRole === 1 && (
+                                                <td>
+                                                    <Link to={`/teacher/exams/create-question/${exam.exam_id}`} className="text-decoration-none">
+                                                        <button style={{ marginRight: "8px" }}>
+                                                            <i className="bi bi-plus-square-fill" style={{ fontSize: "13px" }}></i>
+                                                        </button>
+                                                    </Link>
+                                                    <button
+                                                        onClick={() => handleDeleteExam(exam.exam_id, exam.status)}
+                                                        style={{ marginRight: "8px" }}
+                                                        title="Chuyển về nháp"
+                                                    >
+                                                        <i className="bi bi-arrow-repeat" style={{ fontSize: "13px" }}></i>
+                                                    </button>
+
+                                                    <button
+                                                        onClick={() => handleToggleStatus(exam.exam_id, exam.status)}
+                                                        title="Xoá đề thi"
+                                                    >
+                                                        <i className="bi bi-trash-fill" style={{ fontSize: "13px" }}></i>
+                                                    </button>
+
+                                                </td>
+                                            )
+                                        }
+
                                     </tr>
                                 ))}
                             </tbody>

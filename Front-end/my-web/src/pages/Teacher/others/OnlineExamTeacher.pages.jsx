@@ -22,7 +22,7 @@ const OnlineExamTeacher = () => {
     const removeVietnameseTones = (str) => {
         return str
             .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "") // xóa dấu
+            .replace(/[\u0300-\u036f]/g, "")
             .replace(/đ/g, "d")
             .replace(/Đ/g, "D");
     };
@@ -34,12 +34,11 @@ const OnlineExamTeacher = () => {
                 <h3 className="name-item mb-0">Danh Sách Môn Học</h3>
             </div>
 
-            {/* Thanh tìm kiếm ngay dưới tiêu đề và canh phải */}
             <div className="container mt-2 d-flex justify-content-end">
                 <div
                     className="input-group input-group-sm"
                     style={{
-                        width: "250px", // cố định khung
+                        width: "250px", 
                         flexShrink: 0,
                         flexWrap: "nowrap"
                     }}
@@ -113,7 +112,6 @@ const OnlineExamTeacher = () => {
                                     <button
                                         className="btn btn-primary btn-sm ms-auto p-1"
                                         style={{ width: "120px", height: "32px", display: "flex", alignItems: "center", justifyContent: "center" }}
-                                        // onClick={() => handleAddExam(course.id)}
                                     >
                                         <Link to={`/teacher/courses-detail/${course.id}`}>
                                             <i className="bi bi-plus-lg" style={{ fontSize: "12px", color: "white", fontFamily: "monospace", fontWeight: "normal" }}>Tạo bài thi</i>

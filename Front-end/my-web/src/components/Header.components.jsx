@@ -5,12 +5,10 @@ const HeaderComponent = () => {
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
     const location = useLocation();
-
-    // Load user + role từ localStorage một cách an toàn
     const loadUserFromStorage = useCallback(() => {
         const accessToken = localStorage.getItem("accessToken");
         const storedUser = localStorage.getItem("user");
-        const storedRole = localStorage.getItem("role"); // fallback nếu bạn lưu role riêng
+        const storedRole = localStorage.getItem("role"); 
 
         if (!accessToken) {
             setUser(null);
@@ -20,19 +18,15 @@ const HeaderComponent = () => {
         if (storedUser) {
             try {
                 const parsed = JSON.parse(storedUser);
-
-                // nhiều API trả role khác nhau, nên thử nhiều chỗ
                 const roleIdFromUser =
                     parsed?.roleMapping?.role_id ??
                     parsed?.role_id ??
                     parsed?.role?.id ??
                     parsed?.role;
-
                 const roleId = roleIdFromUser ?? (storedRole ? Number(storedRole) : null);
-
                 const normalizedUser = {
                     ...parsed,
-                    id: parsed?.id ?? parsed?.userId ?? parsed?.user_id, // bình thường là id
+                    id: parsed?.id ?? parsed?.userId ?? parsed?.user_id, 
                     first_name: parsed?.first_name ?? parsed?.firstName ?? "",
                     last_name: parsed?.last_name ?? parsed?.lastName ?? "",
                     role_id: roleId ? Number(roleId) : null,
@@ -44,7 +38,6 @@ const HeaderComponent = () => {
                 setUser(null);
             }
         } else if (storedRole) {
-            // chỉ có role nhưng không có user object
             setUser({ role_id: Number(storedRole) });
         } else {
             setUser(null);
@@ -83,7 +76,6 @@ const HeaderComponent = () => {
         <nav className="navbar navbar-expand-lg bg-black shadow-sm px-4 sticky-top">
             <div className="container-fluid">
                 <Link className="navbar-brand fw-bold fs-4 text-white" to="/">
-                   
                     ExamFlow
                 </Link>
 

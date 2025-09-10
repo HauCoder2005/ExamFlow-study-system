@@ -44,6 +44,103 @@ const ExamsController = {
     },
 
 
+
+    async updateExams(req, res) {
+        try {
+            const {exam_id} = req.params;
+            const teacher_id = req.user.id;
+            const {title, type, time_limit, total_score, status} = req.body;
+            const examData = {
+                exam_id,
+                teacher_id,
+                title,
+                type,
+                time_limit,
+                total_score,
+                status
+            }
+            const updateExam = await ExamsRepository.updateExamByIdTeacher(examData);
+            if (updateExam.affectedRows > 0) {
+                return res.status(200).json({
+                    message: "Chỉnh sửa bài thi thành công!",
+                    examData
+                })
+            }
+        }
+        catch (err) {
+            console.log(err);
+            res.status(500).json({
+                message: "Lỗi chỉnh sửa bài thi!", err
+            })
+        }
+
+    },
+
+
+    async deleteExam(req, res) {
+        try {
+            const { exam_id } = req.params;
+            const teacher_id = req.user.id;
+
+            console.log(teacher_id,exam_id);
+            // if (exam_id != null) {
+            //     return res.status(400).json({
+            //         message: "exam hợp lệ!"
+            //     });
+            // }
+
+            const result = await ExamsRepository.deleteExamByIdTeacher(exam_id, teacher_id);
+
+            console.log("Delete result:", result);
+
+            if (result.affectedRows > 0) {
+                return res.status(200).json({
+                    message: "Xoá bài thi thành công!",
+                    exam_id
+                });
+            } else {
+                return res.status(404).json({
+                    message: "Không tìm thấy bài thi hoặc bạn không có quyền xoá!"
+                });
+            }
+
+        } catch (err) {
+            console.error("Delete exam error:", err);
+            return res.status(500).json({
+                message: "Lỗi khi xoá bài thi!",
+                err
+            });
+        }
+    },
+
+    async updateStatusExams(req, res) {
+        try {
+            const {status} = req.body;
+            const {exam_id} = req.params;
+            const teacher_id = req.user.id;
+            console.log(exam_id, status, teacher_id);
+            const updateStatusExams = await  ExamsRepository.updateStatusExams(exam_id, teacher_id ,status);
+            if(updateStatusExams.affectedRows > 0) {
+                return res.status(200).json({
+                    message: "Cập nhập trạng thái thành công! Bạn đã được phép xoá bài thi.",
+                    status
+                })
+            }
+            else {
+                res.status(404).json({
+                    message: "Cập nhập trạng thái thất bại! Vui lòng kiểm tra lại exam repositories."
+                });
+            }
+        }
+        catch(err) {
+            res.status(500).json({
+                message: "Lỗi hệ thống khi cập nhập lại status bài thi!",
+                err
+            })
+        }
+
+    },
+
     async createQuestion(req, res) {
         try {
             const {exam_id} = req.params;
@@ -215,17 +312,25 @@ const ExamsController = {
             })
         }
     },
+
+
     async getExamsByTeacherAndCourse(req, res) {
         try {
             const teacher_id = req.user.id;
             const { course_id } = req.params;
-
             const exams = await ExamsRepository.getExamsByTeacherAndCourse(teacher_id, course_id);
 
-            return res.status(200).json({
-                message: "Danh sách đề thi theo giáo viên và môn học",
-                data: exams
-            });
+            if(exams.length > 0) {
+                return res.status(200).json({
+                    message: "Danh sách đề thi theo giáo viên và môn học",
+                    data: exams
+                });
+            }
+            else {
+                return res.status(404).json({
+                    message: "Chức năng này chỉ có giáo viên mới có quyền!"
+                })
+            }
         } catch (err) {
             res.status(500).json({
                 message: "Lỗi khi lấy danh sách đề thi!",

@@ -39,6 +39,71 @@ const ExamsRepository = {
         });
     },
 
+    async updateExamByIdTeacher(examsData) {
+        const {
+            teacher_id,
+            exam_id,
+            title,
+            type,
+            time_limit,
+            total_score,
+            status
+        } = examsData;
+        const sql = `
+            UPDATE exams
+            SET title=?, type=?, time_limit=?, total_score=?, status=?
+            WHERE id=? AND teacher_id=?;
+        `;
+
+        return new Promise((resolve, reject) => {
+            config.query(sql, [title, type, time_limit, total_score, status, exam_id, teacher_id], (err, result) => {
+                if (err) return reject(err);
+                if (result.affectedRows === 0) {
+                    return reject({ message: "Không tìm thấy bài thi hoặc bạn không có quyền sửa." });
+                }
+                resolve(result);
+            });
+
+        })
+    },
+
+    async deleteExamByIdTeacher(exam_id, teacher_id) {
+        const sql = `
+            DELETE FROM exams
+            WHERE id=? AND teacher_id=? AND status=0;
+        `;
+        return new Promise((resolve, reject) => {
+            config.query(sql, [exam_id, teacher_id], (err, result) => {
+                if (err) reject(err);
+                else {
+                    if (result.affectedRows === 0) {
+                        reject({ message: "Không thể xoá bài thi! Có thể status khác 0 hoặc không tìm thấy bài thi." });
+                    } else {
+                        resolve(result);
+                    }
+                }
+            });
+        });
+    },
+
+    async updateStatusExams(exam_id, teacher_id, status) {
+        const sql = `
+            UPDATE exams
+            SET status = ?
+            WHERE id = ? AND teacher_id = ?;
+        `;
+        return new Promise((resolve, reject) => {
+            config.query(sql, [status, exam_id, teacher_id], (err, result) => {
+                if (err) reject(err);
+                else resolve(result);
+            });
+        });
+    },
+
+    async updateExamByTeacher(req, res) {
+
+
+    },
 
     async createQuestionByTeacher(examsData) {
         const { exam_id, question_text, question_type, score } = examsData;

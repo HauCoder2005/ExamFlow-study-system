@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { RegisterUser } from "../../api/Auth.api";
+import Swal from "sweetalert2";
 
 const Register = () => {
     const [email, setEmail] = useState("");
@@ -20,10 +21,18 @@ const Register = () => {
             const data = await RegisterUser(firstName, lastName, email, password);
             console.log("Đăng ký thành công!", data);
             setSuccess(true);
+            if (data) {
+                Swal.fire({
+                    icon: "success",
+                    title: "Đăng ký thành công!",
+                    text: "Đang chuyển trang...",
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            }
             setTimeout(() => {
                 navigate("/login");
             }, 1500);
-            alert('Đăng ký thành công!');
         }
         catch(err) {
             setError(err.toString());
@@ -106,20 +115,21 @@ const Register = () => {
                         />
                     </div>
                 </div>
+
                 <a> 
                     <Link to="/login">Bạn đã có tài khoản?</Link>
                 </a>
+
                 <button type="submit" className="btn btn-primary w-100" disabled={loading}>
                     {loading ? "Đang đăng ký..." : "Đăng Ký"}
                 </button>
 
-                {/* Thông báo */}
                 {error && <p className="text-danger mt-3 text-center">{error}</p>}
-                {success && (
+                {/* {success && (
                     <p className="text-success mt-3 text-center">
                         Đăng ký thành công! Đang chuyển trang...
                     </p>
-                )}
+                )} */}
 
             </form>
         </div>

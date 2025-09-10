@@ -30,7 +30,7 @@ exports.sendOtpEmail = (req, res) => {
         saveOtpEmail(email, otp);
 
         try {
-            await sendMail(email, 'Your OTP Code', `Your OTP is: ${otp}`);
+            await sendMail(email, 'Mã xác thực OTP!' ,`Đây là đoạn mã xác thực để đổi mật khẩu vui lòng không cung cấp mã này cho bất kì ai! Mã của bạn là: ${otp}`);
             return res.json({ message: 'OTP đã được gửi tới email của bạn' });
         } catch (emailError) {
             console.error("Lỗi gửi mail:", emailError);

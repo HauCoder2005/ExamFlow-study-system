@@ -6,6 +6,15 @@ router.get('/:course_id', authenticate ,examsController.getExamsByTeacherAndCour
 // create data
 router.post('/create-exams/:course_id', authenticate ,examsController.createExams);
 
+// edit exam
+router.put('/edit-exams/:exam_id', authenticate ,examsController.updateExams);
+
+// delete exam
+router.delete('/delete-exam/:exam_id', authenticate ,examsController.deleteExam);
+
+// chuyển trạng thái về 0 để xoá exams
+router.put('/exam-status/:exam_id', authenticate, examsController.updateStatusExams);
+
 // question data
 router.post('/create-question/:exam_id', authenticate ,examsController.createQuestion);
 
@@ -13,7 +22,7 @@ router.post('/create-question/:exam_id', authenticate ,examsController.createQue
 router.post('/create-option/:question_id', authenticate ,examsController.createOption);
 
 // get question data
-router.get('/question/:exam_id', examsController.getAllQuestions);
+router.get('/question/:exam_id', authenticate ,examsController.getAllQuestions);
 
 // delete question
 router.delete('/question/:question_id', authenticate, examsController.deleteQuestionByIds);
